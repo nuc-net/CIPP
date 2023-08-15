@@ -109,6 +109,6 @@
     ".json": "text/json"
   },
   "_comment": {
-    "test"
+    "comment1": "test"
   }
 }
