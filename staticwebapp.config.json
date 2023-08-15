@@ -107,8 +107,5 @@
   },
   "mimeTypes": {
     ".json": "text/json"
-  },
-  "_comment": {
-    "comment1": "test"
   }
 }
