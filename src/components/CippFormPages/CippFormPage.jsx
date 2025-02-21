@@ -32,7 +32,6 @@ const CippFormPage = (props) => {
     hidePageType = false,
     hideTitle = false,
     hideSubmit = false,
-    allowResubmit = false,
     addedButtons,
     ...other
   } = props;
@@ -43,7 +42,7 @@ const CippFormPage = (props) => {
     relatedQueryKeys: queryKey,
   });
 
-  const { isValid, isDirty } = useFormState({ control: formControl.control });
+  const { isValid } = useFormState({ control: formControl.control });
 
   useEffect(() => {
     delete router.query.tenantFilter;
@@ -134,7 +133,7 @@ const CippFormPage = (props) => {
                   <Stack spacing={2} direction="row">
                     {addedButtons && addedButtons}
                     <Button
-                      disabled={postCall.isPending || !isValid || (!allowResubmit && (!isDirty))}
+                      disabled={postCall.isPending || !isValid}
                       onClick={formControl.handleSubmit(handleSubmit)}
                       type="submit"
                       variant="contained"

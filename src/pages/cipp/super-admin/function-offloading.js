@@ -31,7 +31,7 @@ const Page = () => {
         OffloadFunctions: execOffloadFunctions.data?.OffloadFunctions,
       });
     }
-  }, [execOffloadFunctions.isSuccess, execOffloadFunctions.data]);
+  }, [execOffloadFunctions.isSuccess]);
 
   return (
     <CippFormPage

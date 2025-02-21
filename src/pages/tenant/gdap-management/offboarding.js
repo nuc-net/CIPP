@@ -81,7 +81,6 @@ const Page = () => {
         hideBackButton={true}
         hidePageType={true}
         postUrl="/api/ExecOffboardTenant"
-        resetForm={true}
       >
         <Grid container spacing={2} sx={{ mb: 2 }}>
           <Grid size={12}>

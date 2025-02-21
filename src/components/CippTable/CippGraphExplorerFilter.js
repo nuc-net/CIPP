@@ -68,12 +68,6 @@ const CippGraphExplorerFilter = ({
       IsShared: false,
     },
   });
-  const presetControl = useForm({
-    mode: "onChange",
-    defaultValues: {
-      reportTemplate: null,
-    },
-  });
 
   const defaultGraphExplorerTitle = "Graph Explorer";
 
@@ -191,7 +185,7 @@ const CippGraphExplorerFilter = ({
     });
   };
 
-  const selectedPresets = useWatch({ control: presetControl.control, name: "reportTemplate" });
+  const selectedPresets = useWatch({ control, name: "reportTemplate" });
   useEffect(() => {
     if (selectedPresets?.addedFields?.params) {
       setPresetOwner(selectedPresets?.addedFields?.IsMyPreset ?? false);
@@ -377,6 +371,7 @@ const CippGraphExplorerFilter = ({
 
   function getPresetProps(values) {
     var newvals = Object.assign({}, values);
+    console.log(values);
     if (newvals?.$select !== undefined && Array.isArray(newvals?.$select)) {
       newvals.$select = newvals?.$select.map((p) => p.value).join(",");
     }
@@ -465,7 +460,6 @@ const CippGraphExplorerFilter = ({
     setCardExpanded(false);
   };
 
-  console.log(cardExpanded);
   const deletePreset = (id) => {
     savePresetApi.mutate({
       url: "/api/ExecGraphExplorerPreset",
@@ -479,7 +473,6 @@ const CippGraphExplorerFilter = ({
         title="Graph Filter"
         component={component}
         accordionExpanded={cardExpanded}
-        onAccordionChange={(expanded) => setCardExpanded(expanded)}
         cardSx={{
           width: "100%",
           height: "100%",
@@ -561,7 +554,7 @@ const CippGraphExplorerFilter = ({
               name="reportTemplate"
               label="Select a preset"
               multiple={false}
-              formControl={presetControl}
+              formControl={formControl}
               options={presetOptions}
               isFetching={presetList.isFetching}
               groupBy={(option) => option.type}

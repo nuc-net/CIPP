@@ -107,7 +107,17 @@ const Page = () => {
           </Button>
         </>
       }
-      apiUrl="/api/ListGroups"
+      apiUrl="/api/ListGraphRequest"
+      apiData={{
+        Endpoint: "groups",
+        $select:
+          "id,createdDateTime,displayName,description,mail,mailEnabled,mailNickname,resourceProvisioningOptions,securityEnabled,visibility,organizationId,onPremisesSamAccountName,membershipRule,grouptypes,onPremisesSyncEnabled,resourceProvisioningOptions,userPrincipalName,assignedLicenses",
+        $count: true,
+        $orderby: "displayName",
+        $top: 999,
+        manualPagination: true,
+      }}
+      apiDataKey="Results"
       actions={actions}
       offCanvas={offCanvas}
       simpleColumns={[

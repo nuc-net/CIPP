@@ -1,53 +1,9 @@
 import { ArrowDropDown } from "@mui/icons-material";
-import {
-  Autocomplete,
-  CircularProgress,
-  createFilterOptions,
-  TextField,
-  IconButton,
-} from "@mui/material";
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { Autocomplete, CircularProgress, createFilterOptions, TextField } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useSettings } from "../../hooks/use-settings";
 import { getCippError } from "../../utils/get-cipp-error";
 import { ApiGetCallWithPagination } from "../../api/ApiCall";
-import { Sync } from "@mui/icons-material";
-import { Stack } from "@mui/system";
-import React from "react";
-
-const MemoTextField = React.memo(function MemoTextField({
-  params,
-  label,
-  placeholder,
-  ...otherProps
-}) {
-  const { InputProps, ...otherParams } = params;
-
-  return (
-    <TextField
-      {...otherParams}
-      label={label}
-      placeholder={placeholder}
-      {...otherProps}
-      slotProps={{
-        inputLabel: {
-          shrink: true,
-          sx: { transition: "none" },
-          required: otherProps.required,
-        },
-        input: {
-          ...InputProps,
-          notched: true,
-          sx: {
-            transition: "none",
-            "& .MuiOutlinedInput-notchedOutline": {
-              transition: "none",
-            },
-          },
-        },
-      }}
-    />
-  );
-});
 
 export const CippAutoComplete = (props) => {
   const {
@@ -68,7 +24,6 @@ export const CippAutoComplete = (props) => {
     required = false,
     isFetching = false,
     sx,
-    removeOptions = [],
     ...other
   } = props;
 
@@ -173,14 +128,6 @@ export const CippAutoComplete = (props) => {
     }
   }, [api, actionGetRequest.data, actionGetRequest.isSuccess, actionGetRequest.isError]);
 
-  const memoizedOptions = useMemo(() => {
-    let finalOptions = api ? usedOptions : options;
-    if (removeOptions && removeOptions.length) {
-      finalOptions = finalOptions.filter((o) => !removeOptions.includes(o.value));
-    }
-    return finalOptions;
-  }, [api, usedOptions, options, removeOptions]);
-
   const rand = Math.random().toString(36).substring(5);
 
   return (
@@ -188,7 +135,7 @@ export const CippAutoComplete = (props) => {
       key={`${defaultValue}-${rand}`}
       disabled={disabled || actionGetRequest.isFetching || isFetching}
       popupIcon={
-        actionGetRequest.isFetching || isFetching ? (
+        actionGetRequest.isFetching ? (
           <CircularProgress color="inherit" size={20} />
         ) : (
           <ArrowDropDown />
@@ -200,7 +147,6 @@ export const CippAutoComplete = (props) => {
       disableClearable={disableClearable}
       multiple={multiple}
       fullWidth
-      placeholder={placeholder}
       filterOptions={(options, params) => {
         const filtered = filter(options, params);
         const isExisting =
@@ -208,6 +154,7 @@ export const CippAutoComplete = (props) => {
           options.some(
             (option) => params.inputValue === option.value || params.inputValue === option.label
           );
+
         if (params.inputValue !== "" && creatable && !isExisting) {
           filtered.push({
             label: `Add option: "${params.inputValue}"`,
@@ -240,9 +187,6 @@ export const CippAutoComplete = (props) => {
             }
             return item;
           });
-          newValue = newValue.filter(
-            (item) => item.value && item.value !== "" && item.value !== "error" && item.value !== -1
-          );
         } else {
           if (newValue?.manual || !newValue?.label) {
             newValue = {
@@ -253,45 +197,28 @@ export const CippAutoComplete = (props) => {
               onCreateOption(newValue, newValue?.addedFields);
             }
           }
-          if (!newValue?.value || newValue.value === "error") {
-            newValue = null;
-          }
         }
         if (onChange) {
           onChange(newValue, newValue?.addedFields);
         }
       }}
-      options={memoizedOptions}
-      getOptionLabel={useCallback(
-        (option) =>
-          option
-            ? option.label === null
-              ? ""
-              : option.label || "Label not found - Are you missing a labelField?"
-            : "",
-        []
-      )}
+      options={api ? usedOptions : options}
+      getOptionLabel={(option) =>
+        option
+          ? option.label === null
+            ? ""
+            : option.label || "Label not found - Are you missing a labelField?"
+          : ""
+      }
       sx={sx}
       renderInput={(params) => (
-        <Stack direction="row" spacing={1}>
-          <MemoTextField
-            params={params}
-            label={label}
-            placeholder={placeholder}
-            required={required}
-            {...other}
-          />
-          {api?.url && api?.showRefresh && (
-            <IconButton
-              size="small"
-              onClick={() => {
-                actionGetRequest.refetch();
-              }}
-            >
-              <Sync />
-            </IconButton>
-          )}
-        </Stack>
+        <TextField
+          variant="filled"
+          placeholder={placeholder}
+          required={required}
+          label={label}
+          {...params}
+        />
       )}
       {...other}
     />
